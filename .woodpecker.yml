@@ -1,0 +1,19 @@
+pipeline:
+  build:
+    image: node:18
+    commands:
+      - npm install
+      - npm run build
+
+  test:
+    image: node:18
+    commands:
+      - npm install
+      - npm test -- --watchAll=false
+
+  deploy:
+    image: alpine
+    commands:
+      - echo "Deployment would happen here"
+    when:
+      branch: main
