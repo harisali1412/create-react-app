@@ -1,19 +1,37 @@
-pipeline:
+steps:
   build:
+    name: Build React App
     image: node:18
     commands:
-      - npm install
+      - npm ci
       - npm run build
+    when:
+      event: [push, pull_request]
 
   test:
+    name: Run Tests
     image: node:18
     commands:
-      - npm install
-      - npm test -- --watchAll=false
+      - npm ci
+      - npm test -- --watchAll=false --passWithNoTests
+    when:
+      event: [push, pull_request]
+
+  lint:
+    name: Code Linting
+    image: node:18
+    commands:
+      - npm ci
+      - npm run lint
+    when:
+      event: [push, pull_request]
 
   deploy:
+    name: Deploy to Production
     image: alpine
     commands:
-      - echo "Deployment would happen here"
+      - echo "🚀 Deploying to production..."
+      - echo "This is where you would add your deployment commands"
     when:
       branch: main
+      event: push
