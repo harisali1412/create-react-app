@@ -1,40 +1,42 @@
 steps:
-  install:
-    name: Install Dependencies
+  build:
+    name: Build React App
+    image: node:18
+    environment:
+      # Skip Puppeteer Chromium download in CI to avoid disk space issues
+      PUPPETEER_SKIP_DOWNLOAD: "true"
+    commands:
+      - npm ci --legacy-peer-deps
+      - npm run build
+    when:
+      event: [push, pull_request]
+
+  test:
+    name: Run Tests
     image: node:18
     environment:
       PUPPETEER_SKIP_DOWNLOAD: "true"
-    caches:
-      - node
-      - npm
     commands:
       - npm ci --legacy-peer-deps
-
-  build:
-    image: node:18
-    commands:
-      - npm run build
-    depends_on:
-      - install
-
-  test:
-    image: node:18
-    commands:
       - npm test -- --watchAll=false --passWithNoTests
-    depends_on:
-      - install
+    when:
+      event: [push, pull_request]
 
   lint:
+    name: Code Linting
     image: node:18
     commands:
+      - npm ci --legacy-peer-deps
       - npm run eslint
-    depends_on:
-      - install
+    when:
+      event: [push, pull_request]
 
   deploy:
+    name: Deploy to Production
     image: alpine
     commands:
       - echo "🚀 Deploying to production..."
+      - echo "Add your deployment commands here"
     when:
       branch: main
       event: push
