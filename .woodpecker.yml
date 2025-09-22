@@ -2,8 +2,11 @@ steps:
   build:
     name: Build React App
     image: node:18
+    environment:
+      # Skip Puppeteer Chromium download in CI to avoid disk space issues
+      PUPPETEER_SKIP_DOWNLOAD: "true"
     commands:
-      - npm ci
+      - npm ci --legacy-peer-deps
       - npm run build
     when:
       event: [push, pull_request]
@@ -11,8 +14,10 @@ steps:
   test:
     name: Run Tests
     image: node:18
+    environment:
+      PUPPETEER_SKIP_DOWNLOAD: "true"
     commands:
-      - npm ci
+      - npm ci --legacy-peer-deps
       - npm test -- --watchAll=false --passWithNoTests
     when:
       event: [push, pull_request]
@@ -21,7 +26,7 @@ steps:
     name: Code Linting
     image: node:18
     commands:
-      - npm ci
+      - npm ci --legacy-peer-deps
       - npm run eslint
     when:
       event: [push, pull_request]
@@ -31,7 +36,7 @@ steps:
     image: alpine
     commands:
       - echo "🚀 Deploying to production..."
-      - echo "This is where you would add your deployment commands"
+      - echo "Add your deployment commands here"
     when:
       branch: main
       event: push
